@@ -1,0 +1,91 @@
+/* Stack: a daytime sky, square slabs and stencil type. The game's canvas
+   draws its own sky; these pages use its first, daytime colours. */
+:root {
+	--sky-top: #4aa8e8;
+	--sky-bottom: #cdeeff;
+	--ink: #0b1a3a;
+	--slab: #ff5a36;
+	--slab-edge: #b8321a;
+	--paper: #ffffff;
+	--muted: #2c4a78;
+	--display: 'Big Shoulders Stencil Variable', 'Impact', sans-serif;
+	--body: system-ui, sans-serif;
+	--safe-top: env(safe-area-inset-top);
+	--safe-bottom: env(safe-area-inset-bottom);
+	color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	min-height: 100%;
+	background: linear-gradient(var(--sky-top), var(--sky-bottom)) fixed;
+	color: var(--ink);
+	font: 16px/1.4 var(--body);
+	-webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2 {
+	font-family: var(--display);
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	line-height: 0.9;
+	margin: 0;
+}
+
+/* A button is a slab: square, flat, with a hard edge beneath. */
+.slab {
+	display: block;
+	width: 100%;
+	padding: 14px 18px;
+	border: 0;
+	border-radius: 0;
+	background: var(--slab);
+	box-shadow: 0 6px 0 var(--slab-edge);
+	color: var(--paper);
+	font: 800 26px/1 var(--display);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+}
+.slab:active {
+	transform: translateY(4px);
+	box-shadow: 0 2px 0 var(--slab-edge);
+}
+.slab.plain {
+	background: var(--paper);
+	color: var(--ink);
+	box-shadow: 0 6px 0 #9db4d4;
+}
+
+.page {
+	max-width: 480px;
+	margin: 0 auto;
+	padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px);
+}
+
+.back {
+	display: inline-block;
+	margin-bottom: 18px;
+	font: 800 20px/1 var(--display);
+	text-transform: uppercase;
+	color: var(--ink);
+	text-decoration: none;
+	border-bottom: 3px solid var(--slab);
+}
+
+.empty {
+	padding: 18px;
+	background: rgb(255 255 255 / 0.5);
+	color: var(--muted);
+}

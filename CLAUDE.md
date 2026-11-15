@@ -1,13 +1,13 @@
 # Stack
 
-A one-thumb tower-stacking game, at https://stack.app.haddow.me. Anyone can play `/`; signing in saves scores (`/api/scores`) and shows the leaderboard (`/scores`).
+A one-thumb tower-stacking game, at https://stack.app.haddow.me. No sign-in and no database: scores go to the shared leaderboard in the games launcher (`~/code/games`), whose profile cookie names the player.
 
 ## Worth knowing
 
 - `src/lib/stacker.ts` is the rules (slicing, perfect drops, speed, sky colours): pure and unit tested, keep it that way. `Game.svelte` draws it on a canvas and runs the loop.
 - The canvas loop keeps its state in plain variables, not `$state`: it changes every frame. Only what the overlay shows (phase, height, streak) is reactive.
-- Scores are trusted from the client: it's a household game, so the endpoint only checks they're sane.
-- Signed out, the best score is kept in `localStorage`.
+- The best is kept in `localStorage` (`stack-best`) and sent to the launcher (`board.ts`) on load and after each game, so it counts once a name is picked. If the launcher can't be reached, the game still plays.
+- e2e fakes the launcher with `page.route`.
 - The service worker caches `/` (network first), so the game opens offline.
 - No Tailwind or shadcn: the app has only plain buttons and lists.
-- Secrets: `GOOGLE_CLIENT_SECRET`.
+- No secrets.

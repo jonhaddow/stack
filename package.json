@@ -14,24 +14,18 @@
 		"format": "prettier --write .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
-		"db:generate": "drizzle-kit generate",
 		"gen": "node scripts/gen-types.ts",
-		"db:migrate:local": "wrangler d1 migrations apply stack --local",
-		"db:migrate:remote": "wrangler d1 migrations apply stack --remote",
 		"deploy": "npm run build && npm run deploy:ci",
-		"deploy:ci": "wrangler d1 migrations apply stack --remote && wrangler deploy",
+		"deploy:ci": "wrangler deploy",
 		"test:e2e": "playwright test"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@libsql/client": "^0.18.0",
 		"@playwright/test": "^1.65.0",
 		"@sveltejs/adapter-cloudflare": "^8.0.2",
 		"@sveltejs/kit": "^3.1.1",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@types/node": "^26",
-		"drizzle-kit": "^0.31.10",
-		"drizzle-orm": "^0.45.2",
 		"eslint": "^10.14.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.24.1",
@@ -58,7 +52,6 @@
 		"workerd@1.20261113.1": true
 	},
 	"dependencies": {
-		"@fontsource-variable/big-shoulders-stencil": "^5.3.0",
-		"auth": "github:jonhaddow/auth"
+		"@fontsource-variable/big-shoulders-stencil": "^5.3.0"
 	}
 }

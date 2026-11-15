@@ -25,7 +25,6 @@ jobs:
       - run: npm test
       # Headless shell only: the tests never use full Chromium.
       - run: npx playwright install --with-deps --only-shell chromium
-      - run: cp .dev.vars.example .dev.vars
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v7
         if: failure()

@@ -12,14 +12,9 @@
 		starsAt,
 		type Slab
 	} from '#lib/stacker.ts';
+	import { boardUrl, pickNameUrl, report, type Standing } from '#lib/board.ts';
 
-	type Props = {
-		/** The player's best so far, or null when signed out (then it's kept on this device). */
-		best: number | null;
-		signedIn: boolean;
-	};
-	let { best: serverBest, signedIn }: Props = $props();
-
+	/** The best on this device; the shared board keeps everyone's. */
 	const LOCAL_BEST = 'stack-best';
 
 	let phase = $state<'ready' | 'playing' | 'over'>('ready');
@@ -27,14 +22,18 @@
 	let perfects = $state(0);
 	let streak = $state(0);
 	let flash = $state(0);
-	let best = $derived(serverBest ?? 0);
+	let best = $state(0);
 	let newBest = $state(false);
-	let saving = $state(false);
-	let saveFailed = $state(false);
+	/** Who's playing and where they stand, from the launcher (null if it can't be reached). */
+	let standing = $state<Standing | null>(null);
+	let here = $state('');
 
-	// Signed out, the best is kept on this device.
+	// Also sends a best from before a name was picked, or from offline.
 	$effect(() => {
-		if (!signedIn) best = Number(localStorage.getItem(LOCAL_BEST) ?? 0);
+		const saved = Number(localStorage.getItem(LOCAL_BEST) ?? 0);
+		best = saved;
+		here = location.href;
+		void report(saved).then((s) => (standing = s));
 	});
 
 	// Everything the canvas draws; plain objects, not state, as it changes every frame.
@@ -75,7 +74,6 @@
 		perfects = 0;
 		streak = 0;
 		newBest = false;
-		saveFailed = false;
 		nextBlock();
 		phase = 'playing';
 	}
@@ -120,30 +118,12 @@
 
 	async function gameOver() {
 		phase = 'over';
-		const before = best;
-		if (height > before) {
+		if (height > best) {
 			best = height;
 			newBest = true;
-		}
-		if (!signedIn) {
 			localStorage.setItem(LOCAL_BEST, String(best));
-			return;
 		}
-		if (height === 0) return;
-		saving = true;
-		try {
-			const res = await fetch('/api/scores', {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ height, perfects })
-			});
-			if (!res.ok) throw new Error(String(res.status));
-			best = ((await res.json()) as { best: number }).best;
-		} catch {
-			saveFailed = true;
-		} finally {
-			saving = false;
-		}
+		standing = (await report(best)) ?? standing;
 	}
 
 	function onKey(e: KeyboardEvent) {
@@ -308,9 +288,10 @@
 			<h1>Stack</h1>
 			<p>Tap to drop. Line them up.</p>
 			{#if best}<p class="best">Best {best}</p>{/if}
+			{#if standing?.player}<p>Playing as {standing.player.name}</p>{/if}
 		</div>
 		<nav class="corner" onpointerdown={(e) => e.stopPropagation()}>
-			<a href="/scores">Scores</a>
+			<a href={boardUrl}>Scores</a>
 		</nav>
 		<p class="hint">Tap to start</p>
 	{:else}
@@ -321,13 +302,12 @@
 				{#if newBest && height > 0}New best!{:else}Best {best}{/if}
 				{#if perfects}· {perfects} perfect{/if}
 			</p>
-			{#if saving}<p class="note">Saving…</p>{/if}
-			{#if saveFailed}<p class="note">Couldn’t save that one.</p>{/if}
+			{#if standing?.me}<p class="note">Number {standing.me.rank} on the board</p>{/if}
 			<button class="slab" onclick={start}>Play again</button>
-			{#if signedIn}
-				<a class="slab plain" href="/scores">Scores</a>
+			{#if standing && !standing.player}
+				<a class="slab plain" href={pickNameUrl(here)}>Pick a name for the board</a>
 			{:else}
-				<a class="slab plain" href="/login">Sign in to save scores</a>
+				<a class="slab plain" href={boardUrl}>Scores</a>
 			{/if}
 		</div>
 	{/if}
@@ -465,6 +445,8 @@
 		margin-bottom: 10px;
 	}
 	.note {
-		font-size: 14px;
+		font: 700 20px/1 var(--display);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 	}
 </style>

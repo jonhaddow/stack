@@ -10,15 +10,14 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			// End-to-end tests run against their own local database (see e2e/).
-			adapter: adapter(
-				process.env.E2E_DB ? { platformProxy: { persist: { path: process.env.E2E_DB } } } : {}
-			),
+			adapter: adapter(),
 			// SvelteKit adds nonces for its own inline scripts. Inline styles stay allowed:
 			// components set sizes with style attributes. The font is served with the app.
 			csp: {
 				directives: {
 					'default-src': ['self'],
+					// The shared leaderboard (games.app.haddow.me).
+					'connect-src': ['self', 'https://games.app.haddow.me'],
 					'script-src': ['self'],
 					'style-src': ['self', 'unsafe-inline'],
 					'font-src': ['self'],

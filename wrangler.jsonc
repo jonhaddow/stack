@@ -8,27 +8,11 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	// Only served on stack.app.haddow.me (sign-in sends people back there).
 	"workers_dev": false,
 	"routes": [{ "pattern": "stack.app.haddow.me", "custom_domain": true }],
 	// Keeps request logs and console output (Workers Logs, free tier) for debugging.
 	"observability": {
 		"enabled": true
 	},
-	"vars": {
-		"APP_ORIGIN": "https://stack.app.haddow.me",
-		// Public OAuth client ID; the secret is a Worker secret (GOOGLE_CLIENT_SECRET).
-		"GOOGLE_CLIENT_ID": "856408914710-dgcs4pkdkahr6jchr0pefodiobhjrmv4.apps.googleusercontent.com"
-	},
-	// Off: branch previews would share the live D1 database.
-	"preview_urls": false,
-	"d1_databases": [
-		{
-			// Created with --jurisdiction eu, so the data stays in the EU.
-			"binding": "DB",
-			"database_name": "stack",
-			"database_id": "3d28a497-e1ae-4895-987b-c0a83f356e5d",
-			"migrations_dir": "drizzle"
-		}
-	]
+	"preview_urls": false
 }

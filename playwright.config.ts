@@ -1,9 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// End-to-end tests drive the real app in a phone-sized Chromium. Each run
-// starts a dev server on its own fresh database (e2e/reset-db.sh), signs in
-// once with the dev-only sign-in, and runs the specs one at a time, because
-// they share that database.
+// End-to-end tests drive the real app in a phone-sized Chromium. The shared
+// leaderboard (games.app.haddow.me) is faked per test with page.route.
 // Each app has its own port, so sessions can run several suites at once.
 const PORT = 5189;
 
@@ -18,17 +16,9 @@ export default defineConfig({
 		...devices['Pixel 7'],
 		trace: 'retain-on-failure'
 	},
-	projects: [
-		{ name: 'setup', testMatch: /auth\.setup\.ts/ },
-		{
-			name: 'app',
-			dependencies: ['setup'],
-			use: { storageState: 'e2e/.auth/user.json' }
-		}
-	],
 	webServer: {
-		command: `./e2e/reset-db.sh && E2E_DB=.wrangler/e2e/v3 npx vite dev --port ${PORT} --strictPort`,
-		url: `http://localhost:${PORT}/login`,
+		command: `npx vite dev --port ${PORT} --strictPort`,
+		url: `http://localhost:${PORT}/`,
 		reuseExistingServer: !!process.env.E2E_REUSE,
 		timeout: 120_000
 	}

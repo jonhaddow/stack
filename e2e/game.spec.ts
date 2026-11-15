@@ -9,6 +9,8 @@ async function fakeBoard(page: Page, player: { name: string } | null) {
 	await page.route(API, async (route) => {
 		const body = route.request().postDataJSON() as { value: number } | null;
 		if (body) sent.push(body.value);
+		// The launcher only knows the player from the id it handed over.
+		if (player) expect(route.request().headers()['x-games-profile']).toBe('p-alex');
 		await route.fulfill({
 			json: {
 				player: player && { ...player, colour: '#3a86ff' },
@@ -36,7 +38,9 @@ async function playUntilOver(page: Page) {
 
 test('a finished game sends the best to the shared board', async ({ page }) => {
 	const sent = await fakeBoard(page, { name: 'Alex' });
-	await open(page, '/');
+	// The launcher's links hand the game the player's id.
+	await open(page, '/#profile=p-alex');
+	await expect(page).toHaveURL('/');
 	await expect(page.getByText('Playing as Alex')).toBeVisible();
 	await playUntilOver(page);
 	await expect(page.getByText('Number 2 on the board')).toBeVisible();
@@ -67,5 +71,7 @@ test('it still plays when the board can’t be reached', async ({ page }) => {
 	await page.route(API, (route) => route.abort());
 	await open(page, '/');
 	await playUntilOver(page);
-	await expect(page.getByRole('link', { name: 'Scores' })).toBeVisible();
+	await expect(page.getByText(/on the board/)).toBeHidden();
+	await page.getByRole('button', { name: 'Play again' }).click();
+	await expect(page.getByTestId('height')).toHaveText('0');
 });

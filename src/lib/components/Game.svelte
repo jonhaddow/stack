@@ -26,13 +26,11 @@
 	let newBest = $state(false);
 	/** Who's playing and where they stand, from the launcher (null if it can't be reached). */
 	let standing = $state<Standing | null>(null);
-	let here = $state('');
 
 	// Also sends a best from before a name was picked, or from offline.
 	$effect(() => {
 		const saved = Number(localStorage.getItem(LOCAL_BEST) ?? 0);
 		best = saved;
-		here = location.href;
 		void report(saved).then((s) => (standing = s));
 	});
 
@@ -305,7 +303,7 @@
 			{#if standing?.me}<p class="note">Number {standing.me.rank} on the board</p>{/if}
 			<button class="slab" onclick={start}>Play again</button>
 			{#if standing && !standing.player}
-				<a class="slab plain" href={pickNameUrl(here)}>Pick a name for the board</a>
+				<a class="slab plain" href={pickNameUrl()}>Pick a name for the board</a>
 			{:else}
 				<a class="slab plain" href={boardUrl}>Scores</a>
 			{/if}

@@ -1,6 +1,6 @@
 # Stack
 
-A one-thumb tower-stacking game, at https://stack.app.haddow.me. No sign-in and no database: scores go to the shared leaderboard in the games launcher (`~/code/games`), whose profile cookie names the player.
+A one-thumb tower-stacking game, at https://stack.app.haddow.me. No sign-in and no database: scores go to the shared leaderboard in the games launcher (`~/code/games`). The launcher hands over the player's id as `#profile=<id>` in its links, kept in `localStorage` (`games-profile`).
 
 ## Worth knowing
 

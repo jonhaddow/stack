@@ -2,7 +2,7 @@
 
 A one-thumb tower-stacking game for the phone. Tap to drop a sliding block on the tower. Whatever overhangs is sliced off, so each miss makes the next block narrower. Line one up exactly and it stays full width, and a streak of perfect drops grows it back. The sky darkens from day to night to space as the tower climbs.
 
-Anyone can play. Signing in saves your scores to a shared leaderboard.
+Play it at https://stack.app.haddow.me. Anyone can play; signing in saves your scores to a shared leaderboard.
 
 ## Tech stack
 
